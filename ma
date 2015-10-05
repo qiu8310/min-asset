@@ -114,7 +114,7 @@ Object.keys(types).forEach(function (key) {
 });
 
 function fileType(file) {
-  var ext = file.split('.').pop();
+  var ext = file.split('.').pop().toLowerCase();
   for (var k in types) {
     if (types[k].indexOf(',' + ext + ',') >= 0) return k;
   }

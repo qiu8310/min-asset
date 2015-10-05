@@ -17,6 +17,7 @@ Minify any static file type, includes html, css, js, json, image.
  *
  * @param  {Buffer|String}  content       - 要压缩的文件内容，注意，如果是 image 只能传 Buffer
  * @param  {String}         fileType      - 指定文件的类型，可以是下面几种值：image, js, css, json, html
+ *                                          或者是文件路径，会自动获取它的后缀名
  * @param  {Object|Null}    [minOptions]  - 压缩选项，根据文件类型不同，压缩的选项也不同，但使用的都是对应压缩引擎的选项：
  *
  *                  - image => iamgemin
@@ -40,6 +41,9 @@ Minify any static file type, includes html, css, js, json, image.
  *                    - minifiedSize  {Number}        - 压缩后的尺寸
  *                    - timeSpent     {Number}        - 压缩所花的时间
  */
+function minAsset (content, fileType, minOptions, callback) {
+  // ...
+}
 
 ```
 

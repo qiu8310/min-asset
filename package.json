@@ -1,6 +1,6 @@
 {
   "name": "min-asset",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Minify any static file type, includes html, css, js, json, image.",
   "main": "index.js",
   "bin": {
