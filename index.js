@@ -8,6 +8,15 @@
 
 var helper = {};
 
+function parseOpts(opts) {
+  Object.keys(opts).forEach(function (k) {
+    var v = opts[k];
+    if (/^no[A-Z]/.test(k) && v === true) {
+      opts[k[2].toLowerCase() + k.slice(3)] = false;
+    }
+  });
+}
+
 /**
  *
  * 压缩
@@ -52,8 +61,10 @@ module.exports = function (content, fileType, minOptions, callback) {
   if (typeof minOptions === 'function') {
     callback = minOptions;
     minOptions = {};
-  } else if (!minOptions) {
+  } else if (!minOptions || typeof minOptions !== 'object') {
     minOptions = {};
+  } else {
+    parseOpts(minOptions);
   }
 
   if (!Buffer.isBuffer(content)) {
@@ -66,7 +77,13 @@ module.exports = function (content, fileType, minOptions, callback) {
   try {
     require('./min-types/' + fileType)(content, minOptions, function (err, data) {
 
-      if (err) return callback(err);
+      if (err) {
+        if (!(err instanceof Error)) {
+          err = new Error(JSON.stringify(err, null, 2));
+        }
+
+        return callback(err);
+      }
 
       var minified = data.content;
 

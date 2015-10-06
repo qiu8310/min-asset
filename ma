@@ -18,8 +18,7 @@ var argv = require('yargs')
   .options({
     outDir: {
       alias: 'o',
-      desc: '将压缩的文件输出到指定的文件夹，如果指定，则会在同目录下生成一个 .min 的文件',
-      type: 'string'
+      desc: '将压缩的文件输出到指定的文件夹，如果指定为 true，则会在同目录下生成一个 .min 的文件，如果没指定，则会输出文件内容'
     },
     debug: {
       alias: 'd',
@@ -52,7 +51,7 @@ var argv = require('yargs')
     },
 
     html: {
-      alias: 'h',
+      alias: 't',
       desc: 'html 配置项，下面列出的都是默认设置为 true 的配置' +
         l('collapseWhitespace') +
         l('collapseBooleanAttributes') +
@@ -76,7 +75,7 @@ var argv = require('yargs')
     }
   })
   .strict()
-  .help('help')
+  .help('help').alias('h', 'help')
   .showHelpOnFail(false, '请使用 --help 查看可用的选项')
   .epilog('需要了解更多信息，请访问 https://github.com/qiu8310/min-asset')
   .argv;
@@ -91,27 +90,6 @@ var types = {
   css: ',css,',
   js: ',js,'
 };
-
-var typeOpts = {};
-Object.keys(types).forEach(function (key) {
-  var val = argv[key];
-  typeOpts[key] = {};
-
-  if (typeof val === 'object') {
-    if (key === 'js') {
-      var res = {};
-      Object.keys(val).forEach(function (k) {
-        v = val[k];
-        if (k === 'noMangle') res.mangle = false;
-        else if (k.indexOf('no') === 0 && k[2]) res[k[2].toLowerCase() + k.substr(3)] = false;
-        else res[k] = true;
-      });
-      typeOpts[key] = res;
-    }
-  }
-
-  if (argv.debug) typeOpts[key].debug = true;
-});
 
 function fileType(file) {
   var ext = file.split('.').pop().toLowerCase();
@@ -137,14 +115,21 @@ function minCallback(file, memo, next) {
 
       var toFile;
 
-      if (argv.outDir) {
+      if (typeof argv.outDir === 'string') {
         mkdirp.sync(argv.outDir);
         toFile = path.join(argv.outDir, path.basename(file));
-      } else {
+      } else if (argv.outDir) {
         toFile = file.replace(/(\.\w+)$/, '.min$1');
       }
-      fs.writeFileSync(toFile, data.content);
-      console.log(file + ' => ' + toFile + saved(s + ' - ' + r));
+
+      if (toFile) {
+        fs.writeFileSync(toFile, data.content);
+        console.log(file + ' => ' + toFile + saved(s + ' - ' + r));
+      } else {
+        console.log(data.content.toString());
+        console.log('\r\n' + saved(s + ' - ' + r));
+      }
+
     }
 
     memo += diff;
@@ -163,12 +148,15 @@ async.reduce(
 
     fs.readFile(file, function (err, content) {
       if (err) return next(err);
-      ma(content, type, {}, minCallback(file, memo, next));
+      var opts = argv[type];
+      if (typeof opts !== 'object') opts = {};
+      if (argv.debug) opts.debug = true;
+      ma(content, type, opts, minCallback(file, memo, next));
     });
   },
 
   function (err, result) {
-    if (err) throw err;
+    if (err) return console.log(err.stack || err);
 
     var len = argv._.length;
     if (len && result >= 10) {
