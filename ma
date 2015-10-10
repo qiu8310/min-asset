@@ -11,7 +11,7 @@ var l = function (str, val) {
   return '\n  ' +  '\x1B[90m' + str + '\x1B[m' + '\x1B[33m' + (val || '') + '\x1B[m';
 }
 
-var argv = require('yargs')
+var argv = require('yargs-cn')
   .version(require('./package.json').version).alias('v', 'version')
   .usage("$0 [选项] <文件>")
   .demand(1)
