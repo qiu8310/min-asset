@@ -81,7 +81,7 @@ var argv = require('yargs-cn')
   .argv;
 
 
-var ma = require('.');
+var ma = require('./index');
 
 var types = {
   html: ',html,htm,',
