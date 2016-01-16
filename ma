@@ -62,16 +62,6 @@ var argv = require('yargs-cn')
         l('minifyJS') +
         l('minifyCSS') +
         '\n\n更多配置，请去项目主页查看： https://github.com/kangax/html-minifier#options-quick-reference\n'
-    },
-
-    image: {
-      alias: 'i',
-      desc: 'image 配置项' +
-        l('interlaced', 'true') + '  GIF: Interlace gif for progressive rendering' +
-        l('progressive', 'true') + '  JPEG: Lossless conversion to progressive' +
-        l('optimizationLevel', '3') + '  PNG: Select an optimization level between `0` and `7`' +
-        l('multipass', 'true') + '  SVG: Optimize image multiple times until it\'s fully optimized' +
-        '\n'
     }
   })
   .strict()
@@ -85,7 +75,6 @@ var ma = require('./index');
 
 var types = {
   html: ',html,htm,',
-  image: ',png,jpeg,jpg,gif,svg,',
   json: ',json,',
   css: ',css,',
   js: ',js,'

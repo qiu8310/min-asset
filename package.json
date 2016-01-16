@@ -1,7 +1,7 @@
 {
-  "name": "min-asset",
+  "name": "min-asset-without-imagemin",
   "version": "0.0.6",
-  "description": "Minify any static file type, includes html, css, js, json, image.",
+  "description": "Minify any static file type, includes html, css, js, json.",
   "main": "index.js",
   "bin": {
     "min-asset": "ma"
@@ -32,7 +32,6 @@
     "async": "^1.4.2",
     "clean-css": "^3.4.5",
     "html-minifier": "^0.8.0",
-    "imagemin": "^3.2.0",
     "mkdirp": "^0.5.1",
     "pretty-bytes": "^2.0.1",
     "uglify-js": "^2.4.24",
