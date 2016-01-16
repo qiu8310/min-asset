@@ -2,6 +2,9 @@
 
 Minify any static file type, includes html, css, js, json, image.
 
+## NOTE
+
+**`min-asset` 依赖了 `imagemin`，而 `imagemin` 模块在中国下载起来会比较慢；如果你不需要压缩图片，可以使用 `min-asset-without-imagemin` 模块**
 
 
 ## API
