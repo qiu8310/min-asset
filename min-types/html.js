@@ -1,8 +1,6 @@
-var minify = require('html-minifier').minify;
+var minify = require('html-minifier').minify
 
-
-module.exports = function (content, opts, callback, helper) {
-
+module.exports = function(content, opts, callback, helper) {
   opts = helper.extend({
 
     collapseWhitespace: true,
@@ -14,8 +12,7 @@ module.exports = function (content, opts, callback, helper) {
     minifyJS: true,
     minifyCSS: true
 
-  }, opts);
+  }, opts)
 
-  callback(null, minify(content.toString(), opts));
-
+  callback(null, minify(content.toString(), opts))
 }

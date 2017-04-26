@@ -1,28 +1,57 @@
-var ImageMin = require('imagemin');
+var imagemin = require('imagemin')
+var imageminPlugin = {
+  png: require('imagemin-optipng'),
+  jpg: require('imagemin-jpegtran'),
+  gif: require('imagemin-gifsicle'),
+  svg: require('imagemin-svgo')
+}
 
-module.exports = function (content, opts, callback, helper) {
+module.exports = function(content, opts, callback, helper) {
+  var imageType = opts.imageType
+  var defaultOpts = {
+    png: {
+      bitDepthReduction: true,
+      colorTypeReduction: true,
+      paletteReduction: true,
+      optimizationLevel: 4 // Select an optimization level between `0` and `7`.
+    },
+    jpg: {
+      progressive: true,
+      arithmetic: false
+    },
+    gif: {
+      interlaced: false,
+      optimizationLevel: 2,
+      colors: 0  // Num must be between 2 and 256
+    },
+    svg: {
+    }
+  }
 
+  var newOpts = Object.keys(defaultOpts[imageType]).reduce(function(res, key) {
+    var defaultOpt = defaultOpts[imageType][key]
+    var defaultOptType = typeof defaultOpt
+    var userOpt
+    if (key in opts) {
+      userOpt = opts[key]
+      if (typeof userOpt !== defaultOptType) {
+        if (defaultOptType === 'boolean') userOpt = userOpt !== 'false'
+        else if (defaultOptType === 'number') userOpt = parseInt(userOpt) || 0
+        else userOpt = defaultOpt
+      }
+    }
+    res[key] = userOpt || defaultOpt
+    return res
+  }, {})
 
-  opts = helper.extend({
-
-    interlaced: true,  // gif: Interlace gif for progressive rendering.
-    progressive: true,  // jpeg: Lossless conversion to progressive.
-    optimizationLevel: 3, // png: Select an optimization level between `0` and `7`.
-    multipass: true // svg: Optimize image multiple times until it's fully optimized.
-
-  }, opts);
-
-
-  new ImageMin()
-    .src(content)
-    .use(ImageMin.jpegtran(opts))
-    .use(ImageMin.gifsicle(opts))
-    .use(ImageMin.optipng(opts))
-    .use(ImageMin.svgo(opts))
-    .run(function (err, files) {
-      if (err) return callback(err);
-      callback(null, files[0].contents)
-    });
-
-};
+  imagemin.buffer(content, {
+    plugins: [
+      imageminPlugin[imageType](newOpts)
+    ]
+  })
+    .then(function(buffer) {
+      callback(null, buffer)
+    })
+    .catch(callback)
+}
 
